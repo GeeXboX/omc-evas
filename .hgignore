@@ -5,3 +5,5 @@ syntax: regexp
 \.depend
 config.log
 config.mak
+config.h
+src/omc$

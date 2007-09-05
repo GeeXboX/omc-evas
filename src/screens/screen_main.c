@@ -107,7 +107,7 @@ screen_main_init (screen_t *screen)
   screen->uninit = screen_main_uninit;
 
   /* background pictures */
-  bg = image_new ("background", 0, "./data/background.png",
+  bg = image_new ("background", 0, "data/background.png",
                   NULL, 1, "0", "0", "100%", "100%");
   screen_add_object (screen, bg);
   evas_object_show (bg);

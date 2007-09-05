@@ -123,6 +123,13 @@ textblock_new (char *id, char *str, int editable, char *x, char *y,
                char *w, char *h, int layer, char *font, char *color,
                int size, char *halign, char *valign);
 
+Evas_Object *
+animator_new (char *id, int layer, double timeout,
+              char *x, char *y, char *w, char *h);
+
+void
+animator_set_image_list (Evas_Object *obj, char **image_list);
+
 typedef struct object_relatives_s {
   Evas_Object *obj;
   Evas_Object *up;

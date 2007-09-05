@@ -13,6 +13,7 @@ SRCS := \
 	smart_menu.c \
 	smart_textblock.c \
 	smart_box_yesno.c \
+	smart_animator.c \
 
 include $(SRCDIR)/Makefile.common
 

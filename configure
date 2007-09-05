@@ -603,7 +603,7 @@ echolog "Checking for ecore_evas ..."
     check_cflags -I$ecoreprefix/include
     check_ldflags -L$ecoreprefix/lib
   fi
-  check_lib Ecore_Evas.h ecore_evas_init -ecore_evas;
+  check_lib Ecore_Evas.h ecore_evas_init -lecore_evas;
 } || die "Error, can't find ecore_evas !"
 
 #################################################

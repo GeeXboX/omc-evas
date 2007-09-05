@@ -40,16 +40,34 @@ static Evas_Object *yesno;
 
 static Evas_Object *animator;
 
+static char *movie_list[] = {
+  "data/movie.png",
+  "data/movie2.png",
+  NULL
+};
+
+static char *music_list[] = {
+  "data/music.png",
+  "data/music2.png",
+  "data/music3.png",
+  "data/music4.png",
+  NULL
+};
+
+static char *image_list[] = {
+  "data/image.png",
+  "data/image2.png",
+  "data/image3.png",
+  NULL
+};
+
 static void
 cb_animator_show (void *data, Evas *e,
                   Evas_Object *obj, void *event_info)
 {
-  char *img = (char *) data;
-  if (img)
-  {
-    evas_object_image_file_set (animator, img, NULL);
-    evas_object_show (animator);
-  }
+  char **imgs = (char **) data;
+  if (imgs)
+    animator_set_image_list (animator, imgs);
 }
 
 static void
@@ -129,10 +147,10 @@ screen_main_init (screen_t *screen)
   evas_object_show (clock);
 
   /* animated logo */
-  animator = image_new ("animator", 0, NULL,
-                        NULL, 1, "40%", "19%", "60%", "66%");
+  animator = animator_new ("animator", 1, 7.0,
+                           "40%", "19%", "60%", "66%");
   screen_add_object (screen, animator);
-
+  
   /* main menu and its items */
   menu = menu_new ("menu", MENU_ALIGN_LEFT, 2,
                    NULL, NULL, NULL,
@@ -141,7 +159,7 @@ screen_main_init (screen_t *screen)
 
   item = menu_add_item (menu, "item_movies", "Watch Movies ...");
   evas_object_event_callback_add (item, EVAS_CALLBACK_FOCUS_IN,
-                                  cb_animator_show, "data/movie.png");
+                                  cb_animator_show, movie_list);
   evas_object_event_callback_add (item, EVAS_CALLBACK_FOCUS_OUT,
                                   cb_animator_hide, NULL);
   /* set focus to first menu item */
@@ -149,13 +167,13 @@ screen_main_init (screen_t *screen)
   
   item = menu_add_item (menu, "item_music", "Listen to Music ...");
   evas_object_event_callback_add (item, EVAS_CALLBACK_FOCUS_IN,
-                                  cb_animator_show, "data/music.png");
+                                  cb_animator_show, music_list);
   evas_object_event_callback_add (item, EVAS_CALLBACK_FOCUS_OUT,
                                   cb_animator_hide, NULL);
 
   item = menu_add_item (menu, "item_image", "View Pictures ...");
   evas_object_event_callback_add (item, EVAS_CALLBACK_FOCUS_IN,
-                                  cb_animator_show, "data/image.png");
+                                  cb_animator_show, image_list);
   evas_object_event_callback_add (item, EVAS_CALLBACK_FOCUS_OUT,
                                   cb_animator_hide, NULL);
 

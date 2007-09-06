@@ -201,6 +201,10 @@ animator_timer_pulse (void *cookie)
   if (data->pos >= evas_list_count (data->imgs))
     data->pos = 0;
 
+  /* check for single element: no transition effect is needed */
+  if (evas_list_count (data->imgs) == 1)
+    return 0;
+
   /* return 1 to keep the timer going */
   return 1;
 }

@@ -20,18 +20,24 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "omc.h"
 #include "widget.h"
+
+#define FRAME_PERIOD 0.1 /* seconds */
+#define ALPHA_STEP 25
 
 /* keep a global copy of this, so it only has to be created once */
 static Evas_Smart *smart;
 
 typedef struct _animator_s
 {
+  int buffer;
   int pos;
   double timeout;
   Evas_Object *anim;
+  Evas_Object *tmp;
   Ecore_Timer *timer;
   Evas_List *imgs;
 } _animator_t;
@@ -50,11 +56,15 @@ _animator_add (Evas_Object *o)
 
   evas_object_smart_data_set (o, data);
 
+  data->buffer = 0;
   data->pos = 0;
   data->timeout = 0;
   
   data->anim = evas_object_image_add (omc->evas);
   evas_object_smart_member_add (o, data->anim);
+
+  data->tmp = evas_object_image_add (omc->evas);
+  evas_object_smart_member_add (o, data->tmp);
 
   data->timer = NULL;
   data->imgs = NULL;
@@ -68,6 +78,7 @@ _animator_del (Evas_Object *o)
   data = evas_object_smart_data_get (o);
 
   evas_object_del (data->anim);
+  evas_object_del (data->tmp);
   if (data->timer)
   {
     ecore_timer_del (data->timer);
@@ -84,6 +95,7 @@ _animator_move (Evas_Object *o, Evas_Coord x, Evas_Coord y)
   
   data = evas_object_smart_data_get (o);
   evas_object_move (data->anim, x, y);
+  evas_object_move (data->tmp, x, y);
 }
 
 static void
@@ -94,6 +106,56 @@ _animator_resize (Evas_Object *o, Evas_Coord w, Evas_Coord h)
   data = evas_object_smart_data_get (o);
 
   evas_object_resize (data->anim, w, h);
+  evas_object_resize (data->tmp, w, h);
+}
+
+static int
+animator_show_pulse (void *data)
+{
+  Evas_Object *obj = data;
+  Evas_Coord alpha;
+
+  evas_object_color_get (obj, NULL, NULL, NULL, &alpha);
+  alpha += ALPHA_STEP;
+  evas_object_color_set (obj, alpha, alpha, alpha, alpha);
+  evas_object_color_get (obj, NULL, NULL, NULL, &alpha);
+
+  if (alpha >= 255)
+  {
+    evas_object_color_set (obj, 255, 255, 255, 255);
+    return 0;
+  }
+
+  /* return 1 to keep the timer going */
+  return 1;
+}
+
+static int
+animator_hide_pulse (void *data)
+{
+  Evas_Object *obj = data;
+  Evas_Coord alpha;
+
+  evas_object_color_get (obj, NULL, NULL, NULL, &alpha);
+  alpha -= ALPHA_STEP;
+  evas_object_color_set (obj, alpha, alpha, alpha, alpha);
+  evas_object_color_get (obj, NULL, NULL, NULL, &alpha);
+
+  if (alpha <= 0)
+  {
+    evas_object_color_set (obj, 255, 255, 255, 0);
+    evas_object_hide (obj);
+    return 0;
+  }
+
+  /* return 1 to keep the timer going */
+  return 1;
+}
+
+static void
+cb_show_steps (void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+  ecore_timer_add (FRAME_PERIOD, animator_show_pulse, obj);
 }
 
 static int
@@ -115,8 +177,25 @@ animator_timer_pulse (void *cookie)
   img = (char *) list->data;
   if (!img)
     return 0;
-  
-  evas_object_image_file_set (data->anim, img, NULL);
+
+  if (data->buffer == 0)
+  {
+    evas_object_color_set (data->anim, 255, 255, 255, 0);
+    evas_object_image_file_set (data->anim, img, NULL);
+
+    ecore_timer_add (FRAME_PERIOD, animator_hide_pulse, data->tmp);
+    evas_object_show (data->anim);
+    data->buffer = 1;
+  }
+  else
+  {
+    evas_object_color_set (data->tmp, 255, 255, 255, 0);
+    evas_object_image_file_set (data->tmp, img, NULL);
+
+    ecore_timer_add (FRAME_PERIOD, animator_hide_pulse, data->anim);
+    evas_object_show (data->tmp);
+    data->buffer = 0;
+  }
 
   data->pos++;
   if (data->pos >= evas_list_count (data->imgs))
@@ -138,8 +217,6 @@ _animator_show (Evas_Object *o)
   if (!data->timer)
     data->timer = ecore_timer_add (data->timeout,
                                    animator_timer_pulse, o);
-  
-  evas_object_show (data->anim);
 }
 
 static void
@@ -150,6 +227,7 @@ _animator_hide (Evas_Object *o)
   data = evas_object_smart_data_get (o);
 
   evas_object_hide (data->anim);
+  evas_object_hide (data->tmp);
 
   if (data->timer)
   {
@@ -165,6 +243,7 @@ _animator_color_set (Evas_Object *o, int r, int g, int b, int a)
   
   data = evas_object_smart_data_get (o);
   evas_object_color_set (data->anim, r, g, b, a);
+  evas_object_color_set (data->tmp, r, g, b, a);
 }
 
 static void
@@ -174,6 +253,7 @@ _animator_clip_set (Evas_Object *o, Evas_Object *clip)
   
   data = evas_object_smart_data_get (o);
   evas_object_clip_set (data->anim, clip);
+  evas_object_clip_set (data->tmp, clip);
 }
 
 static void
@@ -183,6 +263,7 @@ _animator_clip_unset (Evas_Object *o)
   
   data = evas_object_smart_data_get (o);
   evas_object_clip_unset (data->anim);
+  evas_object_clip_unset (data->tmp);
 }
 
 static Evas_Smart *
@@ -219,7 +300,15 @@ animator_new (char *id, int layer, double timeout,
 
   data->timeout = timeout;
   image_set (data->anim, NULL, 0, NULL, NULL, layer, x, y, w, h);
-  
+  evas_object_image_alpha_set (data->anim, 1);
+  image_set (data->tmp, NULL, 0, NULL, NULL, layer, x, y, w, h);
+  evas_object_image_alpha_set (data->tmp, 1);
+
+  evas_object_event_callback_add (data->anim, EVAS_CALLBACK_SHOW,
+                                  cb_show_steps, NULL);
+  evas_object_event_callback_add (data->tmp, EVAS_CALLBACK_SHOW,
+                                  cb_show_steps, NULL);
+
   if (id)
     evas_object_name_set (animator, id);
   
@@ -233,9 +322,6 @@ animator_set_image_list (Evas_Object *obj, char **image_list)
 
   data = evas_object_smart_data_get (obj);
 
-  /* hide animation */
-  evas_object_hide (obj);
- 
   /* clear any current image list */
   if (data->imgs)
   {
@@ -259,6 +345,7 @@ animator_set_image_list (Evas_Object *obj, char **image_list)
 
   /* always display first picture from list */
   data->pos = 0;
+  data->buffer = 0;
   
   /* show animation */
   evas_object_show (obj);

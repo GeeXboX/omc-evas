@@ -301,11 +301,11 @@ animator_new (char *id, int layer, double timeout,
   data->timeout = timeout;
   image_set (data->buffer1, NULL, 0, NULL, NULL, layer, x, y, w, h);
   evas_object_image_alpha_set (data->buffer1, 1);
-  image_set (data->buffer2, NULL, 0, NULL, NULL, layer, x, y, w, h);
-  evas_object_image_alpha_set (data->buffer2, 1);
-
   evas_object_event_callback_add (data->buffer1, EVAS_CALLBACK_SHOW,
                                   cb_show_steps, NULL);
+
+  image_set (data->buffer2, NULL, 0, NULL, NULL, layer, x, y, w, h);
+  evas_object_image_alpha_set (data->buffer2, 1);
   evas_object_event_callback_add (data->buffer2, EVAS_CALLBACK_SHOW,
                                   cb_show_steps, NULL);
 

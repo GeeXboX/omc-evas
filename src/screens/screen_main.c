@@ -147,7 +147,7 @@ screen_main_init (screen_t *screen)
   evas_object_show (clock);
 
   /* animated logo */
-  animator = animator_new ("animator", 1, 7.0,
+  animator = animator_new ("animator", 1, 10.0,
                            "40%", "19%", "60%", "66%");
   screen_add_object (screen, animator);
   

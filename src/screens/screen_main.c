@@ -61,6 +61,14 @@ static char *image_list[] = {
   NULL
 };
 
+static char *weather_list[] = {
+  "data/weather.png",
+  "data/weather2.png",
+  "data/weather3.png",
+  "data/weather4.png",
+  NULL
+};
+
 static void
 cb_animator_show (void *data, Evas *e,
                   Evas_Object *obj, void *event_info)
@@ -174,6 +182,12 @@ screen_main_init (screen_t *screen)
   item = menu_add_item (menu, "item_image", "View Pictures ...");
   evas_object_event_callback_add (item, EVAS_CALLBACK_FOCUS_IN,
                                   cb_animator_show, image_list);
+  evas_object_event_callback_add (item, EVAS_CALLBACK_FOCUS_OUT,
+                                  cb_animator_hide, NULL);
+
+  item = menu_add_item (menu, "item_weather", "Weather Forecast ...");
+  evas_object_event_callback_add (item, EVAS_CALLBACK_FOCUS_IN,
+                                  cb_animator_show, weather_list);
   evas_object_event_callback_add (item, EVAS_CALLBACK_FOCUS_OUT,
                                   cb_animator_hide, NULL);
 

@@ -55,13 +55,7 @@ void object_add_default_cb (Evas_Object *obj,
 #include "smart_clock.h"
 #include "smart_menu.h"
 #include "smart_animator.h"
-
-Evas_Object *
-box_yesno_new (char *id, char *str, char *font, char *color, 
-               int size, int alpha, char *x, char *y, char *w, char *h,
-               char *ok, char *cancel,
-               void (*cb_ok) (Evas_Object *obj, void *event_info),
-               void (*cb_cancel) (Evas_Object *obj, void *event_info));
+#include "smart_box_yesno.h"
 
 typedef struct object_relatives_s {
   Evas_Object *obj;

@@ -65,16 +65,7 @@ void object_add_default_cb (Evas_Object *obj,
                             void (*cb) (Evas_Object *obj, void *event_info));
 
 #include "image.h"
-
-Evas_Object *
-text_new (char *id, int focusable, int layer,
-          char *str, char *font, char *color, char *fcolor, 
-          int size, int alpha, char *x, char *y);
-
-void
-text_set (Evas_Object *text, char *id, int focusable, int layer,
-          char *str, char *font, char *color, char *fcolor, 
-          int size, int alpha, char *x, char *y);
+#include "text.h"
 
 Evas_Object *
 entry_box_new (char *id, int layer, char *str, char *font,

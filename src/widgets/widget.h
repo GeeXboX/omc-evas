@@ -64,15 +64,7 @@ int compute_coord (char *coord, int max);
 void object_add_default_cb (Evas_Object *obj,
                             void (*cb) (Evas_Object *obj, void *event_info));
 
-Evas_Object *
-image_new (char *id, int focusable,
-           char *name, char *fname, int layer,
-           char *x, char *y, char *w, char *h);
-
-void
-image_set (Evas_Object *image, char *id, int focusable,
-           char *name, char *fname, int layer,
-           char *x, char *y, char *w, char *h);
+#include "image.h"
 
 Evas_Object *
 text_new (char *id, int focusable, int layer,

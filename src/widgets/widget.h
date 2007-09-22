@@ -49,15 +49,11 @@ void object_add_default_cb (Evas_Object *obj,
 
 #include "image.h"
 #include "text.h"
+#include "button.h"
 #include "smart_textblock.h"
 #include "smart_entry_box.h"
 #include "smart_clock.h"
 #include "smart_menu.h"
-
-Evas_Object *
-button_new (char *id, char *name, char *fname, int layer,
-            char *x, char *y, char *w, char *h,
-            void (*cb) (Evas_Object *obj, void *event_info));
 
 Evas_Object *
 box_yesno_new (char *id, char *str, char *font, char *color, 

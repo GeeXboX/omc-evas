@@ -48,17 +48,6 @@ typedef enum {
   MENU_ALIGN_RIGHT
 } menu_align_t;
 
-typedef enum {
-  BLK_NEW_LINE,
-  BLK_NEW_TAB
-} textblock_blk_type_t;
-
-#define BLK_ALIGN_LEFT "left"
-#define BLK_ALIGN_CENTER "center"
-#define BLK_ALIGN_RIGHT "right"
-#define BLK_ALIGN_TOP "top"
-#define BLK_ALIGN_BOTTOM "bottom"
-
 int compute_coord (char *coord, int max);
 
 void object_add_default_cb (Evas_Object *obj,
@@ -66,6 +55,7 @@ void object_add_default_cb (Evas_Object *obj,
 
 #include "image.h"
 #include "text.h"
+#include "smart_textblock.h"
 
 Evas_Object *
 entry_box_new (char *id, int layer, char *str, char *font,
@@ -98,17 +88,6 @@ box_yesno_new (char *id, char *str, char *font, char *color,
                char *ok, char *cancel,
                void (*cb_ok) (Evas_Object *obj, void *event_info),
                void (*cb_cancel) (Evas_Object *obj, void *event_info));
-
-void
-textblock_format (Evas_Object *blk, textblock_blk_type_t format);
-
-void
-textblock_add_text (Evas_Object *blk, char *text);
-
-Evas_Object *
-textblock_new (char *id, char *str, int editable, char *x, char *y,
-               char *w, char *h, int layer, char *font, char *color,
-               int size, char *halign, char *valign);
 
 Evas_Object *
 animator_new (char *id, int layer, double timeout,

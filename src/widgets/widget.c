@@ -81,6 +81,8 @@ cb_key_down (void *data, Evas *e, Evas_Object *obj, void *event_info)
   Evas_List *list;
   Evas_Event_Key_Down *kd = (Evas_Event_Key_Down *) event_info;
   void (*cb) (Evas_Object *obj, void *event_info) = data;
+  const char *obj_name = NULL;
+  const char *r_name = NULL;
   
   /* check for existing object relatives structure */
   for (list = omc->scr->relatives; list; list = list->next)
@@ -91,7 +93,9 @@ cb_key_down (void *data, Evas *e, Evas_Object *obj, void *event_info)
       continue;
     if (r->obj == obj)
       break;
-    if (!strcmp (evas_object_name_get (r->obj), evas_object_name_get (obj)))
+    obj_name = evas_object_name_get (obj);
+    r_name = evas_object_name_get (r->obj);
+    if (obj_name && r_name && !strcmp (r_name, obj_name))
       break;
     r = NULL;
   }

@@ -42,12 +42,6 @@ typedef enum action_event_type {
   ACTION_EVENT_OK
 } action_event_type_t;
 
-typedef enum {
-  MENU_ALIGN_LEFT,
-  MENU_ALIGN_CENTER,
-  MENU_ALIGN_RIGHT
-} menu_align_t;
-
 int compute_coord (char *coord, int max);
 
 void object_add_default_cb (Evas_Object *obj,
@@ -58,18 +52,7 @@ void object_add_default_cb (Evas_Object *obj,
 #include "smart_textblock.h"
 #include "smart_entry_box.h"
 #include "smart_clock.h"
-
-Evas_Object *
-menu_new (char *id, menu_align_t align, int layer,
-          char *select, char *select_w, char *select_h,
-          char *font, char *color, char *fcolor, int size, int alpha,
-          char *x, char *y, char *w, char *h);
-
-Evas_Object *
-menu_add_item (Evas_Object *menu, char *id, char *str);
-
-void
-menu_compute_items (Evas_Object *menu);
+#include "smart_menu.h"
 
 Evas_Object *
 button_new (char *id, char *name, char *fname, int layer,

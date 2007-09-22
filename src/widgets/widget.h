@@ -85,6 +85,10 @@ text_set (Evas_Object *text, char *id, int focusable, int layer,
           int size, int alpha, char *x, char *y);
 
 Evas_Object *
+entry_box_new (char *id, int layer, char *str, char *font,
+               char *color, char *x, char *y, char *w, char *h);
+
+Evas_Object *
 clock_new (char *id, int layer, char *font, char *color, 
            int size, int alpha, char *x, char *y);
 

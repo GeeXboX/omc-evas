@@ -52,7 +52,6 @@ image_set (Evas_Object *image, char *id, int focusable,
 
   if (focusable && fname)
   {
-    object_add_default_cb (image, NULL);
     evas_object_event_callback_add (image, EVAS_CALLBACK_FOCUS_IN,
                                     cb_img_focus_update, fname);
     evas_object_event_callback_add (image, EVAS_CALLBACK_FOCUS_OUT,

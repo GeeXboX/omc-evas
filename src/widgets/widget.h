@@ -54,6 +54,7 @@ void object_add_default_cb (Evas_Object *obj,
 #include "smart_entry_box.h"
 #include "smart_clock.h"
 #include "smart_menu.h"
+#include "smart_animator.h"
 
 Evas_Object *
 box_yesno_new (char *id, char *str, char *font, char *color, 
@@ -61,13 +62,6 @@ box_yesno_new (char *id, char *str, char *font, char *color,
                char *ok, char *cancel,
                void (*cb_ok) (Evas_Object *obj, void *event_info),
                void (*cb_cancel) (Evas_Object *obj, void *event_info));
-
-Evas_Object *
-animator_new (char *id, int layer, double timeout,
-              char *x, char *y, char *w, char *h);
-
-void
-animator_set_image_list (Evas_Object *obj, char **image_list);
 
 typedef struct object_relatives_s {
   Evas_Object *obj;

@@ -56,10 +56,7 @@ void object_add_default_cb (Evas_Object *obj,
 #include "image.h"
 #include "text.h"
 #include "smart_textblock.h"
-
-Evas_Object *
-entry_box_new (char *id, int layer, char *str, char *font,
-               char *color, char *x, char *y, char *w, char *h);
+#include "smart_entry_box.h"
 
 Evas_Object *
 clock_new (char *id, int layer, char *font, char *color, 

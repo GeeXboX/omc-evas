@@ -35,6 +35,8 @@
 #define HAL_VOLUME_DISC_SVCD "volume.disc.is_svcd"
 #define HAL_VOLUME_DISC_DVD  "volume.disc.is_videodvd"
 
+static Evas_List *volumes_list = NULL;
+
 static const struct {
   const char *name;
   volume_disc_t type;
@@ -170,8 +172,7 @@ storage_volume_print (storage_volume_t *sv)
 }
 
 static void
-hal_parse_drive_volume (Evas_List *volumes_list,
-                        LibHalContext *halctx, char *udi, int vol_num,
+hal_parse_drive_volume (LibHalContext *halctx, char *udi, int vol_num,
                         LibHalDrive *drv, LibHalDriveBus bus,
                         LibHalDriveType drive_type)
 {
@@ -265,8 +266,7 @@ hal_parse_drive_volume (Evas_List *volumes_list,
 }
 
 static void
-hal_parse_cd_drive (Evas_List *volumes_list,
-                    LibHalContext *halctx, char *udi,
+hal_parse_cd_drive (LibHalContext *halctx, char *udi,
                     LibHalDrive *drv, LibHalDriveBus bus)
 {
   int i, num_volumes;
@@ -278,13 +278,12 @@ hal_parse_cd_drive (Evas_List *volumes_list,
   volumes = libhal_drive_find_all_volumes (halctx, drv, &num_volumes);
 
   for (i = 0; i < num_volumes; i++)
-    hal_parse_drive_volume (volumes_list, halctx, volumes[i], i, drv,
+    hal_parse_drive_volume (halctx, volumes[i], i, drv,
                             bus, LIBHAL_DRIVE_TYPE_CDROM);
 }
 
 static void
-hal_parse_disk_drive (Evas_List *volumes_list,
-                      LibHalContext *halctx, char *udi,
+hal_parse_disk_drive (LibHalContext *halctx, char *udi,
                       LibHalDrive *drv, LibHalDriveBus bus,
                       LibHalDriveType drive_type)
 {
@@ -294,12 +293,11 @@ hal_parse_disk_drive (Evas_List *volumes_list,
   volumes = libhal_drive_find_all_volumes (halctx, drv, &num_volumes);
 
   for (i = 0; i < num_volumes; i++)
-    hal_parse_drive_volume (volumes_list, halctx,
-                            volumes[i], i, drv, bus, drive_type);
+    hal_parse_drive_volume (halctx, volumes[i], i, drv, bus, drive_type);
 }
 
 static void
-hal_parse_drive (Evas_List *volumes_list, LibHalContext *halctx, char *udi)
+hal_parse_drive (LibHalContext *halctx, char *udi)
 {
   LibHalDrive *drv;
   LibHalDriveBus bus;
@@ -316,9 +314,9 @@ hal_parse_drive (Evas_List *volumes_list, LibHalContext *halctx, char *udi)
   drive_type = libhal_drive_get_type (drv);
   
   if (drive_type == LIBHAL_DRIVE_TYPE_CDROM)
-    hal_parse_cd_drive (volumes_list, halctx, udi, drv, bus);
+    hal_parse_cd_drive (halctx, udi, drv, bus);
   else
-    hal_parse_disk_drive (volumes_list, halctx, udi, drv, bus, drive_type);
+    hal_parse_disk_drive (halctx, udi, drv, bus, drive_type);
   
   libhal_drive_free (drv);
 }
@@ -326,12 +324,29 @@ hal_parse_drive (Evas_List *volumes_list, LibHalContext *halctx, char *udi)
 Evas_List *
 hal_get_storage_volumes (void)
 {
-  Evas_List *volumes_list = NULL;
+  Evas_List *list;
   LibHalContext *halctx;
   DBusError error;
   DBusConnection *conn;
   int i, num_devices;
   char **device_list;
+
+  if (volumes_list)
+  {
+    for (list = volumes_list; list; list = list->next)
+    {
+      storage_volume_t *sv = NULL;
+
+      sv = (storage_volume_t *) list->data;
+      if (!sv)
+        continue;
+
+      storage_volume_free (sv);
+      volumes_list = evas_list_remove_list (volumes_list, volumes_list);
+    }
+    free (volumes_list);
+    volumes_list = NULL;
+  }
   
   dbus_error_init (&error);
   conn = dbus_bus_get (DBUS_BUS_SYSTEM, &error);
@@ -343,7 +358,7 @@ hal_get_storage_volumes (void)
   device_list = libhal_get_all_devices (halctx, &num_devices, &error);
 
   for (i = 0; i < num_devices; i++)
-    hal_parse_drive (volumes_list, halctx, device_list[i]);
+    hal_parse_drive (halctx, device_list[i]);
   libhal_free_string_array (device_list);
   
   libhal_ctx_shutdown (halctx, &error);

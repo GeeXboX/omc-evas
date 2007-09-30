@@ -105,8 +105,8 @@ _animator_resize (Evas_Object *o, Evas_Coord w, Evas_Coord h)
   
   data = evas_object_smart_data_get (o);
 
-  evas_object_resize (data->buffer1, w, h);
-  evas_object_resize (data->buffer2, w, h);
+  image_resize (data->buffer1, w, h);
+  image_resize (data->buffer2, w, h);
 }
 
 static int
@@ -291,30 +291,31 @@ _animator_smart_get (void)
 /*** external API ***/
 
 Evas_Object *
-animator_new (char *id, int layer, double timeout,
-              char *x, char *y, char *w, char *h)
+animator_new (char *id, int layer, double timeout)
 {
   extern omc_t *omc;
   Evas_Object *animator;
   _animator_t *data;
+
+  if (!id) /* mandatory */
+    return NULL;
 
   animator = evas_object_smart_add (omc->evas, _animator_smart_get ());
 
   data = evas_object_smart_data_get (animator);
 
   data->timeout = timeout;
-  image_set (data->buffer1, NULL, 0, NULL, NULL, layer, x, y, w, h);
+  image_set (data->buffer1, NULL, layer, 0, NULL, NULL);
   evas_object_image_alpha_set (data->buffer1, 1);
   evas_object_event_callback_add (data->buffer1, EVAS_CALLBACK_SHOW,
                                   cb_show_steps, NULL);
 
-  image_set (data->buffer2, NULL, 0, NULL, NULL, layer, x, y, w, h);
+  image_set (data->buffer2, NULL, layer, 0, NULL, NULL);
   evas_object_image_alpha_set (data->buffer2, 1);
   evas_object_event_callback_add (data->buffer2, EVAS_CALLBACK_SHOW,
                                   cb_show_steps, NULL);
 
-  if (id)
-    evas_object_name_set (animator, id);
+  evas_object_name_set (animator, id);
   
   return animator;
 }

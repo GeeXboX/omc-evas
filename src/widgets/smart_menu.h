@@ -20,6 +20,8 @@
 #ifndef _SMART_MENU_H_
 #define _SMART_MENU_H_
 
+#include "widget.h"
+
 typedef enum {
   MENU_ALIGN_LEFT,
   MENU_ALIGN_CENTER,
@@ -27,10 +29,9 @@ typedef enum {
 } menu_align_t;
 
 Evas_Object *
-menu_new (char *id, menu_align_t align, int layer,
-          char *select, char *select_w, char *select_h,
-          char *font, char *color, char *fcolor, int size, int alpha,
-          char *x, char *y, char *w, char *h);
+menu_new (char *id, int layer, const style_t *style,
+          menu_align_t align, char *select, int select_w,
+          int select_h);
 
 Evas_Object *
 menu_add_item (Evas_Object *menu, char *id, char *str);

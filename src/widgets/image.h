@@ -21,13 +21,14 @@
 #define _IMAGE_H_
 
 Evas_Object *
-image_new (char *id, int focusable,
-           char *name, char *fname, int layer,
-           char *x, char *y, char *w, char *h);
+image_new (char *id, int layer, int focusable,
+           char *name, char *fname);
 
 void
-image_set (Evas_Object *image, char *id, int focusable,
-           char *name, char *fname, int layer,
-           char *x, char *y, char *w, char *h);
+image_set (Evas_Object *image, char *id, int layer, int focusable,
+           char *name, char *fname);
+
+void
+image_resize (Evas_Object *image, int w, int h);
 
 #endif /* _IMAGE_H_ */

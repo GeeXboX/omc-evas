@@ -21,13 +21,11 @@
 #define _TEXT_H_
 
 Evas_Object *
-text_new (char *id, int focusable, int layer,
-          char *str, char *font, char *color, char *fcolor, 
-          int size, int alpha, char *x, char *y);
+text_new (char *id, int layer, const style_t *style,
+          int focusable, char *str);
 
 void
-text_set (Evas_Object *text, char *id, int focusable, int layer,
-          char *str, char *font, char *color, char *fcolor, 
-          int size, int alpha, char *x, char *y);
+text_set (Evas_Object *text, char *id, int layer, const style_t *style,
+          int focusable, char *str);
 
 #endif /* _TEXT_H_ */

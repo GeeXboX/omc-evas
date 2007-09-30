@@ -21,8 +21,7 @@
 #define _BUTTON_H_
 
 Evas_Object *
-button_new (char *id, char *name, char *fname, int layer,
-            char *x, char *y, char *w, char *h,
+button_new (char *id, int layer, char *name, char *fname,
             void (*cb) (Evas_Object *obj, void *event_info));
 
 #endif /* _BUTTON_H_ */

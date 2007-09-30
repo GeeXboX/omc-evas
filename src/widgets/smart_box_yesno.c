@@ -87,10 +87,20 @@ static void
 _box_yesno_move (Evas_Object *o, Evas_Coord x, Evas_Coord y)
 {
   _box_yesno_t *data;
-  
+  Evas_Coord dx, dy, old_x, old_y;
+
   data = evas_object_smart_data_get (o);
 
-  //evas_object_move (data->box_yesno, x, y);
+  evas_object_geometry_get (data->box, &old_x, &old_y, NULL, NULL);
+  dx = x - old_x;
+  dy = y - old_y;
+  evas_object_move (data->box, x, y);
+  evas_object_geometry_get (data->txt, &old_x, &old_y, NULL, NULL);
+  evas_object_move (data->txt, old_x + dx, old_y + dy);
+  evas_object_geometry_get (data->ok, &old_x, &old_y, NULL, NULL);
+  evas_object_move (data->ok, old_x + dx, old_y + dy);
+  evas_object_geometry_get (data->cancel, &old_x, &old_y, NULL, NULL);
+  evas_object_move (data->cancel, old_x + dx, old_y + dy);
 }
 
 static void
@@ -100,7 +110,7 @@ _box_yesno_resize (Evas_Object *o, Evas_Coord w, Evas_Coord h)
   
   data = evas_object_smart_data_get (o);
 
-  //evas_object_resize (data->box_yesno, w, h);
+  image_resize (data->box, w, h);
 }
 
 static void
@@ -180,8 +190,7 @@ _box_yesno_smart_get (void)
 /*** external API ***/
 
 Evas_Object *
-box_yesno_new (char *id, char *str, char *font, char *color, 
-               int size, int alpha, char *x, char *y, char *w, char *h,
+box_yesno_new (char *id, char *str, const style_t *style,
                char *ok, char *cancel,
                void (*cb_ok) (Evas_Object *obj, void *event_info),
                void (*cb_cancel) (Evas_Object *obj, void *event_info))
@@ -189,41 +198,26 @@ box_yesno_new (char *id, char *str, char *font, char *color,
   extern omc_t *omc;
   Evas_Object *box_yesno;
   _box_yesno_t *data;
-  color_t *cl;
-  int x2, y2, w2, h2;
-  char x3[16], y3[16];
+
+  if (!id) /* mandatory */
+    return NULL;
   
   box_yesno = evas_object_smart_add (omc->evas, _box_yesno_smart_get ());
-
-  x2 = compute_coord (x, omc->w);
-  y2 = compute_coord (y, omc->h);
-  w2 = compute_coord (x, omc->w);
-  h2 = compute_coord (y, omc->h);
-  cl = color_new (color, alpha);
   
   data = evas_object_smart_data_get (box_yesno);
 
-  image_set (data->bg, NULL, 0, "data/alpha-layer.png",
-             NULL, 50, 0, 0, "1280", "720");
+  image_set (data->bg, NULL, 50, 0, "data/alpha-layer.png", NULL);
+  image_resize (data->bg, compute_coord ("100%", omc->w), compute_coord ("100%", omc->h));
 
-  image_set (data->box, NULL, 0, "data/frame-plain.png",
-             NULL, 51, x, y, w, h);
+  image_set (data->box, NULL, 51, 0, "data/frame-plain.png", NULL);
 
-  sprintf (x3, "%d", x2 + 120);
-  sprintf (y3, "%d", y2 + 100);
-  text_set (data->txt, NULL, 0, 52, str, font, color, NULL,
-            size, alpha, x3, y3);
+  text_set (data->txt, "txt", 52, style, 0, str);
+  evas_object_move (data->txt, 120, 100);
 
-  sprintf (x3, "%d", x2 + 30);
-  sprintf (y3, "%d", y2 + 200);
-  
-  text_set (data->ok, "ok", 1, 52, ok, font, color, "#FF00FF",
-            size, alpha, x3, y3);
-
-  sprintf (x3, "%d", x2 + 350);
-  
-  text_set (data->cancel, "cancel", 1, 52, cancel, font, color, "#FF00FF",
-            size, alpha, x3, y3);
+  text_set (data->ok, "ok", 52, style, 1, ok);
+  evas_object_move (data->ok, 30, 200);
+  text_set (data->cancel, "cancel", 52, style, 1, cancel);
+  evas_object_move (data->cancel, 350, 200);
 
   object_set_relatives (data->ok, NULL, NULL, NULL, data->cancel);
   object_set_relatives (data->cancel, NULL, NULL, data->ok, NULL);

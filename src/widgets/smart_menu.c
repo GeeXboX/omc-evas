@@ -23,6 +23,11 @@
 #include "omc.h"
 #include "widget.h"
 
+static const style_t default_style = {
+        { "FreeSans", 30, { 0xFF, 0xFF, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } },
+        { "FreeSans", 30, { 0xFF, 0x00, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } }
+};
+
 /* keep a global copy of this, so it only has to be created once */
 static Evas_Smart *smart;
 
@@ -36,11 +41,7 @@ typedef struct menu_s
   Evas_List *items;
   Evas_List *hidden;
   int layer;
-  char *font;
-  char *color;
-  char *fcolor;
-  int size;
-  int alpha;
+  const style_t *style;
 } menu_t;
 
 /*** smart object handler functions ***/
@@ -67,11 +68,6 @@ _menu_add (Evas_Object *o)
   data->hidden = NULL;
 
   data->layer = 1;
-  data->font = NULL;
-  data->color = NULL;
-  data->fcolor = NULL;
-  data->size = 0;
-  data->alpha = 255;
 }
 
 static void
@@ -113,10 +109,6 @@ _menu_del (Evas_Object *o)
     }
     free (data->hidden);
   }
-
-  free (data->font);
-  free (data->color);
-  free (data->fcolor);
   
   free (data);
 }
@@ -127,7 +119,12 @@ _menu_move (Evas_Object *o, Evas_Coord x, Evas_Coord y)
   menu_t *data;
   
   data = evas_object_smart_data_get (o);
-  //evas_object_move (data->text, x, y);
+
+  data->x = x;
+  data->y = y;
+  evas_object_move (data->frame, x, y);
+  evas_object_move (data->select, x, y);
+  menu_compute_items (o);
 }
 
 static void
@@ -137,7 +134,11 @@ _menu_resize (Evas_Object *o, Evas_Coord w, Evas_Coord h)
   
   data = evas_object_smart_data_get (o);
 
-  //evas_object_resize (data->text, w, h);
+  data->w = w;
+  data->h = h;
+  image_resize (data->frame, w, h);
+  //evas_object_resize (data->select, w, h);
+  menu_compute_items (o);
 }
 
 static void
@@ -240,36 +241,35 @@ _menu_smart_get (void)
 /*** external API ***/
 
 Evas_Object *
-menu_new (char *id, menu_align_t align, int layer,
-          char *select, char *select_w, char *select_h,
-          char *font, char *color, char *fcolor, int size, int alpha,
-          char *x, char *y, char *w, char *h)
+menu_new (char *id, int layer, const style_t *style,
+          menu_align_t align, char *select, int select_w,
+          int select_h)
 {
   extern omc_t *omc;
   Evas_Object *menu;
   menu_t *data;
 
+  if (!id) /* mandatory */
+    return NULL;
+
   menu = evas_object_smart_add (omc->evas, _menu_smart_get ());
   data = evas_object_smart_data_get (menu);
   
   data->align = align;
-  data->x = compute_coord (x, omc->w);
-  data->y = compute_coord (y, omc->h);
-  data->w = compute_coord (w, omc->w);
-  data->h = compute_coord (h, omc->h);
 
+  if (!style)
+    style = &default_style;
+
+  data->style = style;
   data->layer = layer;
-  data->font = strdup (font);
-  data->color = strdup (color);
-  data->fcolor = strdup (fcolor);
-  data->size = size;
-  data->alpha = alpha;
   
-  image_set (data->frame, NULL, 0, "data/frame.png", NULL, 1, x, y, w, h);
+  image_set (data->frame, NULL, 1, 0, "data/frame.png", NULL);
   
   if (select)
-    image_set (data->select, id, 0,
-               select, NULL, 5, x, "0", select_w, select_h);
+  {
+    image_set (data->select, id, 5, 0, select, NULL);
+    image_resize (data->select, select_w, select_h);
+  }
 
 /*   text_set (data->text, id, 1, layer, str, font, color, fcolor, */
 /*             size, alpha, "0", "0"); */
@@ -284,8 +284,7 @@ menu_new (char *id, menu_align_t align, int layer,
 /*                                     cb_mouse_menu_logo_hide, data->image); */
 /*   } */
 
-  if (id)
-    evas_object_name_set (menu, id);
+  evas_object_name_set (menu, id);
   
   return menu;
 }
@@ -299,8 +298,7 @@ menu_add_item (Evas_Object *menu, char *id, char *str)
   
   data = evas_object_smart_data_get (menu);
 
-  item = text_new (id, 1, data->layer + 1, str, data->font, data->color,
-                   data->fcolor, data->size, data->alpha, "0", "0");
+  item = text_new (id, data->layer + 1, data->style, 1, str);
   
 /*   if (logo) */
 /*   { */
@@ -348,6 +346,10 @@ menu_compute_items (Evas_Object *menu)
 
   data = evas_object_smart_data_get (menu);
   items = evas_list_count (data->items);
+
+  if (!items)
+    return;
+
   i = 0;
 
   x = 0;

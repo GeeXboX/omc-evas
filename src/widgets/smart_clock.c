@@ -25,6 +25,11 @@
 #include "color.h"
 #include "widget.h"
 
+static const style_t default_style = {
+        { "FreeSans", 20, { 0xFF, 0xFF, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } },
+        { "FreeSans", 20, { 0xFF, 0x00, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } }
+};
+
 /* keep a global copy of this, so it only has to be created once */
 static Evas_Smart *smart;
 
@@ -169,29 +174,27 @@ clock_timer_pulse (void *data)
 /*** external API ***/
 
 Evas_Object *
-clock_new (char *id, int layer, char *font, char *color, 
-           int size, int alpha, char *x, char *y)
+clock_new (char *id, int layer, const style_t *style)
 {
   extern omc_t *omc;
   Evas_Object *clock;
   _clock_t *data;
-  color_t *cl;
-  int x2, y2;
+  const color_t *cl;
 
-  if (!id || !font) /* mandatory */
+  if (!id) /* mandatory */
     return NULL;
+
+  if (!style)
+    style = &default_style;
   
   clock = evas_object_smart_add (omc->evas, _clock_smart_get ());
 
-  x2 = compute_coord (x, omc->w);
-  y2 = compute_coord (y, omc->h);
-  cl = color_new (color, alpha);
+  cl = &style->normal.font_color;
   
   data = evas_object_smart_data_get (clock);
 
-  evas_object_text_font_set (data->clock, font, size);
+  evas_object_text_font_set (data->clock, style->normal.font, style->normal.font_size);
   clock_timer_pulse (data->clock);
-  evas_object_move (data->clock, x2, y2);
   evas_object_color_set (data->clock, cl->r, cl->g, cl->b, cl->a);
   evas_object_layer_set (data->clock, layer);
 

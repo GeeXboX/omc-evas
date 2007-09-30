@@ -23,19 +23,20 @@
 #include "widget.h"
 
 Evas_Object *
-button_new (char *id, char *name, char *fname, int layer,
-            char *x, char *y, char *w, char *h,
+button_new (char *id, int layer, char *name, char *fname,
             void (*cb) (Evas_Object *obj, void *event_info))
 {
   Evas_Object *button;
 
-  if (!name || !fname)
+  if (!name || !fname || !id)
     return NULL;
   
   button = evas_object_image_add (omc->evas);
 
-  image_set (button, id, 1, name, fname, layer, x, y, w, h);
+  image_set (button, id, layer, 1, name, fname);
   object_add_default_cb (button, cb);
+
+  evas_object_name_set (button, id);
   
   return button;
 }

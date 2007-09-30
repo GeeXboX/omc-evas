@@ -31,22 +31,10 @@ cb_img_focus_update (void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 void
-image_set (Evas_Object *image, char *id, int focusable,
-           char *name, char *fname, int layer,
-           char *x, char *y, char *w, char *h)
+image_set (Evas_Object *image, char *id, int layer, int focusable,
+           char *name, char *fname)
 {
-  extern omc_t *omc;
-  int x2, y2, w2, h2;
-
-  x2 = compute_coord (x, omc->w);
-  y2 = compute_coord (y, omc->h);
-  w2 = compute_coord (w, omc->w);
-  h2 = compute_coord (h, omc->h);
-  
   evas_object_image_file_set (image, name, NULL);
-  evas_object_move (image, x2, y2); 
-  evas_object_resize (image, w2, h2);
-  evas_object_image_fill_set (image, 0, 0, w2, h2);
   evas_object_layer_set (image, layer);
   evas_object_image_smooth_scale_set (image, 1);
 
@@ -63,15 +51,21 @@ image_set (Evas_Object *image, char *id, int focusable,
 }
 
 Evas_Object *
-image_new (char *id, int focusable,
-           char *name, char *fname, int layer,
-           char *x, char *y, char *w, char *h)
+image_new (char *id, int layer, int focusable,
+           char *name, char *fname)
 {
   Evas_Object *image;
   
   image = evas_object_image_add (omc->evas);
 
-  image_set (image, id, focusable, name, fname, layer, x, y, w, h);
+  image_set (image, id, layer, focusable, name, fname);
   
   return image;
+}
+
+void
+image_resize (Evas_Object *image, int w, int h)
+{
+  evas_object_resize (image, w, h);
+  evas_object_image_fill_set (image, 0, 0, w, h);
 }

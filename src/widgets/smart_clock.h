@@ -21,7 +21,6 @@
 #define _SMART_CLOCK_H_
 
 Evas_Object *
-clock_new (char *id, int layer, char *font, char *color, 
-           int size, int alpha, char *x, char *y);
+clock_new (char *id, int layer, const style_t *style);
 
 #endif /* _SMART_CLOCK_H_ */

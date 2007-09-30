@@ -27,6 +27,11 @@
 
 #define TXT_BLOCK_SIZE 32768
 
+static const style_t default_style = {
+        { "FreeSans", 30, { 0xFF, 0xFF, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } },
+        { "FreeSans", 30, { 0xFF, 0x00, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } }
+};
+
 /* keep a global copy of this, so it only has to be created once */
 static Evas_Smart *smart;
 
@@ -275,39 +280,36 @@ textblock_add_text (Evas_Object *blk, char *text)
 }
 
 Evas_Object *
-textblock_new (char *id, char *str, int editable, char *x, char *y,
-               char *w, char *h, int layer, char *font, char *color,
-               int size, char *halign, char *valign)
+textblock_new (char *id, int layer, const style_t *style, char *str,
+               int editable, char *halign, char *valign)
 {
-  char style[1024];
+  char blockStyle[1024];
   Evas_Object *blk;
   _textblock_t *data;
-  color_t *cl;
-  Evas_Coord x2, y2, w2, h2;
+
+  if (!id)
+    return NULL;
+
+  if (!style)
+    style = &default_style;
 
   blk = evas_object_smart_add (omc->evas, _textblock_smart_get ());
-  
-  x2 = compute_coord (x, omc->w);
-  y2 = compute_coord (y, omc->h);
-  w2 = compute_coord (w, omc->w);
-  h2 = compute_coord (h, omc->h);
-  cl = color_new (color, 255);
 
   data = evas_object_smart_data_get (blk);
 
   data->editable = editable;
   
-  evas_object_move (data->text, x2, y2);
-  evas_object_resize (data->text, w2, h2);
   evas_object_layer_set (data->text, layer);
 
   //evas_object_textblock_cursor_new (data->text);
 
-  sprintf (style, "DEFAULT='font=%s font_size=%d color=%sFF " \
-           "wrap=word align=%s valign=%s'", font, size, color, halign, valign);
+  sprintf (blockStyle, "DEFAULT='font=%s font_size=%d color=%X%X%XFF " \
+           "wrap=word align=%s valign=%s'", style->normal.font, style->normal.font_size,
+           style->normal.font_color.r, style->normal.font_color.g, style->normal.font_color.b,
+           halign, valign);
   
   data->style = evas_textblock_style_new ();
-  evas_textblock_style_set (data->style, style);
+  evas_textblock_style_set (data->style, blockStyle);
   evas_object_textblock_style_set (data->text, data->style);
 
   textblock_add_text (blk, str);
@@ -334,8 +336,7 @@ textblock_new (char *id, char *str, int editable, char *x, char *y,
 /*                                     cb_textblock_edit, cur); */
 /*   } */
 
-  if (id)
-    evas_object_name_set (blk, id);
+  evas_object_name_set (blk, id);
   
   return blk;
 }

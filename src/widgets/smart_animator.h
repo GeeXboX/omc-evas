@@ -21,8 +21,7 @@
 #define _SMART_ANIMATOR_H_
 
 Evas_Object *
-animator_new (char *id, int layer, double timeout,
-              char *x, char *y, char *w, char *h);
+animator_new (char *id, int layer, double timeout);
 
 void
 animator_set_image_list (Evas_Object *obj, char **image_list);

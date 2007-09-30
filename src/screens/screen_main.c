@@ -110,10 +110,10 @@ static void
 cb_button_exit_ok (Evas_Object *obj, void *event_info)
 {
   /* exit message box */
-  yesno = box_yesno_new ("yesno", "Really wanna quit ?",
-                         "FreeSans", "#FFFFFF", 
-                         30, 255, "30%", "30%", "40%", "40%",
+  yesno = box_yesno_new ("yesno", "Really wanna quit ?", NULL,
                          "OK", "Cancel", cb_exit_box_ok, cb_exit_box_cancel);
+  evas_object_move (yesno, compute_coord ("30%", omc->w), compute_coord ("30%", omc->h));
+  evas_object_resize (yesno, compute_coord ("40%", omc->w), compute_coord ("40%", omc->h));
 
   evas_object_show (yesno);
 }
@@ -133,37 +133,42 @@ screen_main_init (screen_t *screen)
   screen->uninit = screen_main_uninit;
 
   /* background pictures */
-  bg = image_new ("background", 0, "data/background.png",
-                  NULL, 1, "0", "0", "100%", "100%");
+  bg = image_new ("background", 1, 0, "data/background.png",
+                  NULL);
+  image_resize (bg, compute_coord ("100%", omc->w), compute_coord ("100%", omc->h));
   screen_add_object (screen, bg);
   evas_object_show (bg);
   
-  bt = image_new ("banner-top", 0, "data/banner-top.png",
-                  NULL, 1, "0", "0", "100%", "35%");
+  bt = image_new ("banner-top", 1, 0, "data/banner-top.png", NULL);
+  image_resize (bt, compute_coord ("100%", omc->w), compute_coord ("35%", omc->h));
   screen_add_object (screen, bt);
   evas_object_show (bt);
 
-  bb = image_new ("banner-bottom", 0, "data/banner-bottom.png",
-                  NULL, 1, "0", "80%", "100%", "20%");
+  bb = image_new ("banner-bottom", 1, 0, "data/banner-bottom.png", NULL);
   screen_add_object (screen, bb);
+  evas_object_move (bb, 0, compute_coord ("80%", omc->h));
+  image_resize (bb, compute_coord ("100%", omc->w), compute_coord ("20%", omc->h));
   evas_object_show (bb);
 
   /* date/clock */
-  clock = clock_new ("clock", 1, "FreeSans", "#FFFFFF", 
-                     20, 255, "990", "85");
+  clock = clock_new ("clock", 1, NULL);
+  // Clock font size should be 20
+  evas_object_move (clock, 990, 85);
   screen_add_object (screen, clock);
   evas_object_show (clock);
 
   /* animated logo */
-  animator = animator_new ("animator", 1, 10.0,
-                           "40%", "19%", "60%", "66%");
+  animator = animator_new ("animator", 1, 10.0);
+  evas_object_move (animator, compute_coord ("40%", omc->w), compute_coord ("19%", omc->h));
+  evas_object_resize (animator, compute_coord ("60%", omc->w), compute_coord ("66%", omc->h));
+  
   screen_add_object (screen, animator);
   
   /* main menu and its items */
-  menu = menu_new ("menu", MENU_ALIGN_LEFT, 2,
-                   NULL, NULL, NULL,
-                   "FreeSans", "#FFFFFF", "#FF00FF", 30, 255,
-                   "2%", "32%", "30%", "52%");
+  menu = menu_new ("menu", 2, NULL, MENU_ALIGN_LEFT,
+                   NULL, 0, 0);
+  evas_object_move (menu, compute_coord ("2%", omc->w), compute_coord ("32%", omc->h));
+  evas_object_resize (menu, compute_coord ("30%", omc->w), compute_coord ("52%", omc->h));
 
   item = menu_add_item (menu, "item_movies", "Watch Movies ...");
   evas_object_event_callback_add (item, EVAS_CALLBACK_FOCUS_IN,
@@ -194,14 +199,16 @@ screen_main_init (screen_t *screen)
   evas_object_show (menu);
 
   /* bottom line info/exit buttons */
-  button_info = button_new ("info", "data/sub-info-nofocus.png",
-                            "data/sub-info-focus.png", 1,
-                            "91%", "88%", "40", "40", cb_button_info_ok);
+  button_info = button_new ("info", 1, "data/sub-info-nofocus.png",
+                            "data/sub-info-focus.png", cb_button_info_ok);
+  evas_object_move (button_info, compute_coord ("91%", omc->w), compute_coord ("88%", omc->h));
+  image_resize (button_info, 40, 40);
   evas_object_show (button_info);
 
-  button_exit = button_new ("exit", "data/sub-shutdown-nofocus.png",
-                            "data/sub-shutdown-focus.png", 1,
-                            "95%", "88%", "40", "40", cb_button_exit_ok);
+  button_exit = button_new ("exit", 1, "data/sub-shutdown-nofocus.png",
+                            "data/sub-shutdown-focus.png", cb_button_exit_ok);
+  evas_object_move (button_exit, compute_coord ("95%", omc->w), compute_coord ("88%", omc->h));
+  image_resize (button_exit, 40, 40);
   evas_object_show (button_exit);
 
   object_set_relatives (item, NULL, button_info, NULL, button_info);

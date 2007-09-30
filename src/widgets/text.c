@@ -24,6 +24,11 @@
 #include "widget.h"
 #include "color.h"
 
+static const style_t default_style = {
+      { "FreeSans", 30, { 0xFF, 0xFF, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } },
+      { "FreeSans", 30, { 0xFF, 0x00, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } }
+};
+
 static void
 cb_text_focus_update (void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
@@ -33,32 +38,26 @@ cb_text_focus_update (void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 void
-text_set (Evas_Object *text, char *id, int focusable, int layer,
-          char *str, char *font, char *color, char *fcolor, 
-          int size, int alpha, char *x, char *y)
+text_set (Evas_Object *text, char *id, int layer, const style_t *style,
+          int focusable, char *str)
 {
-  extern omc_t *omc;
-  color_t *cl = NULL, *fcl = NULL;
-  int x2, y2;
+  const color_t *cl = NULL, *fcl = NULL;
 
-  if (!str || !font) /* mandatory */
+  if (!str || !id) /* mandatory */
     return;
-  
-  x2 = compute_coord (x, omc->w);
-  y2 = compute_coord (y, omc->h);
 
-  if (color)
-    cl = color_new (color, alpha);
-  if (fcolor)
-    fcl = color_new (fcolor, alpha);
+  if (!style)
+    style = &default_style;
 
-  evas_object_text_font_set (text, font, size);
+  cl = &style->normal.font_color;
+  fcl = &style->focused.font_color;
+
+  evas_object_text_font_set (text, style->normal.font, style->normal.font_size);
   evas_object_text_text_set (text, str);
-  evas_object_move (text, x2, y2);
   evas_object_color_set (text, cl->r, cl->g, cl->b, cl->a);
   evas_object_layer_set (text, layer);
 
-  if (focusable && fcolor)
+  if (focusable)
   {
     object_add_default_cb (text, NULL);
     evas_object_event_callback_add (text, EVAS_CALLBACK_FOCUS_IN,
@@ -67,21 +66,18 @@ text_set (Evas_Object *text, char *id, int focusable, int layer,
                                     cb_text_focus_update, cl);
   }
 
-  if (id)
-    evas_object_name_set (text, id);
+  evas_object_name_set (text, id);
 }
 
 Evas_Object *
-text_new (char *id, int focusable, int layer,
-          char *str, char *font, char *color, char *fcolor, 
-          int size, int alpha, char *x, char *y)
+text_new (char *id, int layer, const style_t *style,
+          int focusable, char *str)
 {
   Evas_Object *text;
   
   text = evas_object_text_add (omc->evas);
 
-  text_set (text, id, focusable, layer, str,
-            font, color, fcolor, size, alpha, x, y);
+  text_set (text, id, layer, style, focusable, str);
   
   return text;
 }

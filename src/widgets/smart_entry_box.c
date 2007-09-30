@@ -28,17 +28,19 @@
 
 #define ENTRY_BOX_SIZE 1024
 
+static const style_t default_style = {
+        { "FreeSans", 30, { 0xFF, 0xFF, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } },
+        { "FreeSans", 30, { 0xFF, 0x00, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } }
+};
+
 /* keep a global copy of this, so it only has to be created once */
 static Evas_Smart *smart;
 
 typedef struct _entry_box_s
 {
   char str[ENTRY_BOX_SIZE];
-  int x, y;
-  int w, h;
   Evas_Object *rect;
   Evas_Object *text;
-  int layer;
 } _entry_box_t;
 
 static void
@@ -51,7 +53,7 @@ _entry_box_add (Evas_Object *o)
     return;
 
   data->rect = evas_object_rectangle_add (omc->evas);
-  evas_object_smart_member_add (o, data->text);
+  evas_object_smart_member_add (o, data->rect);
   
   data->text = evas_object_text_add (omc->evas);
   evas_object_smart_member_add (o, data->text);
@@ -206,42 +208,34 @@ cb_entry_box_mouse_in (void *data, Evas *e,
 }
 
 Evas_Object *
-entry_box_new (char *id, int layer, char *str, char *font,
-               char *color, char *x, char *y, char *w, char *h)
+entry_box_new (char *id, int layer, const style_t *style, char *str)
 {
   Evas_Object *entry_box;
   _entry_box_t *data;
-  color_t *cl;
+  const color_t *cl, *fcl;
 
   if (!id)
     return NULL;
 
+  if (!style)
+    style = &default_style;
+
   entry_box = evas_object_smart_add (omc->evas, _entry_box_smart_get());
   data = evas_object_smart_data_get (entry_box);
 
-  data->x = compute_coord (x, omc->w);
-  data->y = compute_coord (y, omc->h);
-  data->w = compute_coord (w, omc->w);
-  data->h = compute_coord (h, omc->h);
-
-  data->layer = layer;
   strncpy (data->str, str, ENTRY_BOX_SIZE);
 
-  /* TODO: Make alpha configurable */
-  cl = color_new (color, 255);
+  cl = &style->normal.widget_color;
+  fcl = &style->normal.font_color;
 
-  evas_object_color_set (data->rect, 0, 0, 0, 255);
   evas_object_layer_set (data->rect, layer);
-  evas_object_show (data->rect);
+  evas_object_color_set (data->rect, cl->r, cl->g, cl->b, cl->a);
 
-  /* TODO: Make font size configurable */
-  evas_object_text_font_set (data->text, font, 20);
+  evas_object_text_font_set (data->text, style->normal.font, style->normal.font_size);
   evas_object_text_text_set (data->text, str);
   evas_object_layer_set (data->text, layer + 1);
-  evas_object_show (data->text);
+  evas_object_color_set (data->text, fcl->r, fcl->g, fcl->b, fcl->a);
 
-  evas_object_move (entry_box, data->x, data->y);
-  evas_object_resize (entry_box, data->w, data->h);
   evas_object_name_set (entry_box, id);
   
   evas_object_event_callback_add (data->text, EVAS_CALLBACK_MOUSE_IN,

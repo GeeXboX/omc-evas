@@ -24,6 +24,7 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include "color.h"
 
 typedef enum widget_flags {
   WIDGET_FLAG_NONE                  = 0x00,
@@ -41,6 +42,15 @@ typedef enum action_event_type {
   ACTION_EVENT_CANCEL,
   ACTION_EVENT_OK
 } action_event_type_t;
+
+typedef struct style_s {
+  struct {
+    char *font;
+    int font_size;
+    color_t font_color;
+    color_t widget_color;
+  } normal, focused;
+} style_t;
 
 int compute_coord (char *coord, int max);
 

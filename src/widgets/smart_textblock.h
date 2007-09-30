@@ -32,9 +32,8 @@ typedef enum {
 #define BLK_ALIGN_BOTTOM "bottom"
 
 Evas_Object *
-textblock_new (char *id, char *str, int editable, char *x, char *y,
-               char *w, char *h, int layer, char *font, char *color,
-               int size, char *halign, char *valign);
+textblock_new (char *id, int layer, const style_t *style, char *str,
+               int editable, char *halign, char *valign);
 
 void
 textblock_format (Evas_Object *blk, textblock_blk_type_t format);

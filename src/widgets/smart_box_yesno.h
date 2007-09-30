@@ -21,9 +21,7 @@
 #define _SMART_BOX_YESNO_H_
 
 Evas_Object *
-box_yesno_new (char *id, char *str, char *font, char *color, 
-               int size, int alpha, char *x, char *y, char *w, char *h,
-               char *ok, char *cancel,
+box_yesno_new (char *id, char *str, const style_t *style, char *ok, char *cancel,
                void (*cb_ok) (Evas_Object *obj, void *event_info),
                void (*cb_cancel) (Evas_Object *obj, void *event_info));
 

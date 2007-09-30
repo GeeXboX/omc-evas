@@ -21,7 +21,6 @@
 #define _SMART_ENTRY_BOX_H_
 
 Evas_Object *
-entry_box_new (char *id, int layer, char *str, char *font,
-               char *color, char *x, char *y, char *w, char *h);
+entry_box_new (char *id, int layer, const style_t *style, char *str);
 
 #endif /* _SMART_ENTRY_BOX_H_ */

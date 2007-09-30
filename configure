@@ -257,6 +257,28 @@ check_libconfig(){
     return $err
 }
 
+check_pkglibconfig(){
+    local pkg func ccflags clibs err
+    log check_pkglibconfig "$@"
+    pkg="$1"
+    func="$2"
+    ccflags="${3:---cflags}"
+    clibs="${4:---libs}"
+    err=1
+    if `which pkg-config 1>/dev/null 2>&1`; then
+      cflags=`pkg-config $pkg $ccflags`
+      [ -n "$cflags" ] && check_cflags "$cflags"
+      libs=`pkg-config $pkg $clibs`
+      if [ -n "$libs" ]; then
+        temp_extralibs "$libs"
+        check_func $func && add_extralibs "$libs"
+        err=$?
+        restore_flags
+      fi
+    fi
+    return $err
+}
+
 append_header(){
     echo "$@" >> $TMPH
 }
@@ -605,6 +627,24 @@ echolog "Checking for ecore_evas ..."
   fi
   check_lib Ecore_Evas.h ecore_evas_init -lecore_evas;
 } || die "Error, can't find ecore_evas !"
+
+#################################################
+#   check for dbus-1
+#################################################
+echolog "Checking for dbus-1 ..."
+check_pkglibconfig dbus-1 dbus_bus_get || die "Error, can't find dbus-1 !"
+
+#################################################
+#   check for hal
+#################################################
+echolog "Checking for hal ..."
+check_pkglibconfig hal libhal_ctx_new || die "Error, can't find hal !"
+
+#################################################
+#   check for hal-storage
+#################################################
+echolog "Checking for hal-storage ..."
+check_pkglibconfig hal-storage libhal_drive_from_udi || die "Error, can't find hal-storage !"
 
 #################################################
 #   check for libcurl

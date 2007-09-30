@@ -5,6 +5,7 @@ BIN_NAME := omc
 
 SRCS := \
 	omc.c \
+	hal_drv_storage.c \
 
 DEP_LIBS := \
 	screens/screens.a \

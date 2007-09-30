@@ -77,6 +77,7 @@ screen_init (screen_type_t type)
 {
   screen_t *screen;
   extern void * screen_main_init (screen_t *screen);
+  extern void * screen_movie_init (screen_t *screen);
 
   screen = malloc (sizeof (screen_t));
   screen->objects = NULL;
@@ -93,6 +94,9 @@ screen_init (screen_type_t type)
   {
   case SCREEN_TYPE_MAIN:
     screen_main_init (screen);
+    break;
+  case SCREEN_TYPE_MOVIE:
+    screen_movie_init (screen);
     break;
   }
 }

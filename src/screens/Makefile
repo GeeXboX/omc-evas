@@ -6,6 +6,7 @@ LIBNAME := screens.a
 SRCS := \
 	screen.c \
 	screen_main.c \
+	screen_movie.c \
 
 include $(SRCDIR)/Makefile.common
 

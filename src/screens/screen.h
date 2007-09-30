@@ -23,7 +23,8 @@
 #include "widgets/widget.h"
 
 typedef enum {
-  SCREEN_TYPE_MAIN
+  SCREEN_TYPE_MAIN,
+  SCREEN_TYPE_MOVIE,
 } screen_type_t;
 
 typedef struct screen_s {

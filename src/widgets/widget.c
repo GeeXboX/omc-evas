@@ -156,6 +156,68 @@ object_add_default_cb (Evas_Object *obj,
                                   cb_mouse_down, cb);
 }
 
+static void
+cb_key_ok (void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+  action_key_t k;
+  Evas_Event_Key_Down *kd = (Evas_Event_Key_Down *) event_info;
+  void (*cb) (Evas_Object *obj, void *event_info) = data;
+
+  k = event_get_action_key (kd->keyname);
+
+  switch (k)
+  {
+  case KEY_OK:
+    if (cb)
+      cb (obj, event_info);
+    break;
+  default:
+    break;
+  } 
+}
+
+void
+object_set_cb_ok (Evas_Object *obj,
+                  void (*cb) (Evas_Object *obj, void *event_info))
+{
+  if (!obj)
+    return;
+
+  evas_object_event_callback_add (obj, EVAS_CALLBACK_KEY_DOWN,
+                                  cb_key_ok, cb);
+}
+
+static void
+cb_key_cancel (void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+  action_key_t k;
+  Evas_Event_Key_Down *kd = (Evas_Event_Key_Down *) event_info;
+  void (*cb) (Evas_Object *obj, void *event_info) = data;
+
+  k = event_get_action_key (kd->keyname);
+
+  switch (k)
+  {
+  case KEY_CANCEL:
+    if (cb)
+      cb (obj, event_info);
+    break;
+  default:
+    break;
+  } 
+}
+
+void
+object_set_cb_cancel (Evas_Object *obj,
+                      void (*cb) (Evas_Object *obj, void *event_info))
+{
+  if (!obj)
+    return;
+
+  evas_object_event_callback_add (obj, EVAS_CALLBACK_KEY_DOWN,
+                                  cb_key_cancel, cb);
+}
+
 int
 compute_coord (char *coord, int max)
 {

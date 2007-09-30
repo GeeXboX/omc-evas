@@ -57,6 +57,14 @@ int compute_coord (char *coord, int max);
 void object_add_default_cb (Evas_Object *obj,
                             void (*cb) (Evas_Object *obj, void *event_info));
 
+void object_set_cb_ok (Evas_Object *obj,
+                       void (*cb) (Evas_Object *obj, void *event_info));
+
+void object_set_cb_cancel (Evas_Object *obj,
+                           void (*cb) (Evas_Object *obj, void *event_info));
+
+
+
 #include "image.h"
 #include "text.h"
 #include "button.h"

@@ -25,11 +25,6 @@
 #include "color.h"
 #include "widget.h"
 
-static const style_t default_style = {
-        { "FreeSans", 20, { 0xFF, 0xFF, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } },
-        { "FreeSans", 20, { 0xFF, 0x00, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } }
-};
-
 /* keep a global copy of this, so it only has to be created once */
 static Evas_Smart *smart;
 
@@ -185,7 +180,7 @@ clock_new (char *id, int layer, const style_t *style)
     return NULL;
 
   if (!style)
-    style = &default_style;
+    style = &default_clock_style;
   
   clock = evas_object_smart_add (omc->evas, _clock_smart_get ());
 

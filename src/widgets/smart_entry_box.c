@@ -28,11 +28,6 @@
 
 #define ENTRY_BOX_SIZE 1024
 
-static const style_t default_style = {
-        { "FreeSans", 30, { 0xFF, 0xFF, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } },
-        { "FreeSans", 30, { 0xFF, 0x00, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } }
-};
-
 /* keep a global copy of this, so it only has to be created once */
 static Evas_Smart *smart;
 
@@ -218,7 +213,7 @@ entry_box_new (char *id, int layer, const style_t *style, char *str)
     return NULL;
 
   if (!style)
-    style = &default_style;
+    style = &default_text_style;
 
   entry_box = evas_object_smart_add (omc->evas, _entry_box_smart_get());
   data = evas_object_smart_data_get (entry_box);

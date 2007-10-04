@@ -27,11 +27,6 @@
 
 #define TXT_BLOCK_SIZE 32768
 
-static const style_t default_style = {
-        { "FreeSans", 30, { 0xFF, 0xFF, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } },
-        { "FreeSans", 30, { 0xFF, 0x00, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } }
-};
-
 /* keep a global copy of this, so it only has to be created once */
 static Evas_Smart *smart;
 
@@ -291,7 +286,7 @@ textblock_new (char *id, int layer, const style_t *style, char *str,
     return NULL;
 
   if (!style)
-    style = &default_style;
+    style = &default_text_style;
 
   blk = evas_object_smart_add (omc->evas, _textblock_smart_get ());
 

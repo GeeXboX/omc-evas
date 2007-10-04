@@ -201,6 +201,9 @@ box_yesno_new (char *id, char *str, const style_t *style,
 
   if (!id) /* mandatory */
     return NULL;
+
+  if (!style)
+      style = &default_text_style;
   
   box_yesno = evas_object_smart_add (omc->evas, _box_yesno_smart_get ());
   

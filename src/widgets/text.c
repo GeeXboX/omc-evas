@@ -24,11 +24,6 @@
 #include "widget.h"
 #include "color.h"
 
-static const style_t default_style = {
-      { "FreeSans", 30, { 0xFF, 0xFF, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } },
-      { "FreeSans", 30, { 0xFF, 0x00, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } }
-};
-
 static void
 cb_text_focus_update (void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
@@ -47,7 +42,7 @@ text_set (Evas_Object *text, char *id, int layer, const style_t *style,
     return;
 
   if (!style)
-    style = &default_style;
+    style = &default_text_style;
 
   cl = &style->normal.font_color;
   fcl = &style->focused.font_color;

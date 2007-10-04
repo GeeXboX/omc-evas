@@ -43,14 +43,20 @@ typedef enum action_event_type {
   ACTION_EVENT_OK
 } action_event_type_t;
 
+typedef struct state_style_s {
+  char *font;
+  int font_size;
+  color_t font_color;
+  color_t widget_color;
+} state_style_t;
+
 typedef struct style_s {
-  struct {
-    char *font;
-    int font_size;
-    color_t font_color;
-    color_t widget_color;
-  } normal, focused;
+  state_style_t normal;
+  state_style_t focused;
 } style_t;
+
+extern const style_t default_clock_style;
+extern const style_t default_text_style;
 
 int compute_coord (char *coord, int max);
 
@@ -62,8 +68,6 @@ void object_set_cb_ok (Evas_Object *obj,
 
 void object_set_cb_cancel (Evas_Object *obj,
                            void (*cb) (Evas_Object *obj, void *event_info));
-
-
 
 #include "image.h"
 #include "text.h"

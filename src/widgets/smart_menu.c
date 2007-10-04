@@ -23,11 +23,6 @@
 #include "omc.h"
 #include "widget.h"
 
-static const style_t default_style = {
-        { "FreeSans", 30, { 0xFF, 0xFF, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } },
-        { "FreeSans", 30, { 0xFF, 0x00, 0xFF, 0xFF }, { 0x00, 0x00, 0x00, 0xFF } }
-};
-
 /* keep a global copy of this, so it only has to be created once */
 static Evas_Smart *smart;
 
@@ -258,7 +253,7 @@ menu_new (char *id, int layer, const style_t *style,
   data->align = align;
 
   if (!style)
-    style = &default_style;
+    style = &default_text_style;
 
   data->style = style;
   data->layer = layer;

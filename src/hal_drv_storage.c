@@ -104,7 +104,6 @@ static const struct {
   { "ZIP",                    LIBHAL_DRIVE_TYPE_ZIP                     },
   { "JAZ",                    LIBHAL_DRIVE_TYPE_JAZ                     },
   { "FlashKey",               LIBHAL_DRIVE_TYPE_FLASHKEY                },
-  { "MagnetoOptical",         LIBHAL_DRIVE_TYPE_MO                      },
   { NULL }
 };
 
